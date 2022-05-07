@@ -1,0 +1,12 @@
+.component {
+  height: 25%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.suggestions {
+  height: 100px;
+  overflow-y: auto;
+  padding: 5px;
+}
