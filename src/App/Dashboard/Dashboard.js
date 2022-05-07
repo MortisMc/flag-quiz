@@ -1,14 +1,17 @@
 import React from 'react';
 import Styles from './Dashboard.module.css';
 
-export default function Dashboard({studyMode, country, score, previousScore, changeGameMode}) {
+export default function Dashboard({studyMode, country, countries, score, previousScore, changeGameMode, setPreviousScore, setScore, setStudyMode, nextCountry, setCountry}) {
+  const handleClick = () => changeGameMode(studyMode, score, setPreviousScore, setScore, setStudyMode);
+  const handleNextClick = () => nextCountry(setCountry, countries);
   return (
     <div className={Styles.component}>
       <ul className={Styles.boxes}>
-        <button className='box' onClick={changeGameMode}>Change game mode ({studyMode ? 'Start Quiz' : 'Give up'})</button>
-        <div className='box'>{studyMode ? country.name : `Score: ${score}`}</div>
+        <button className='box' onClick={handleClick}>Change game mode ({studyMode ? 'Start Quiz' : 'Give up'})</button>
+        <div className='box'>{studyMode ? country : `Score: ${score}`}</div>
         <div className='box'>Previous Score: {previousScore}</div>
       </ul>
+      {studyMode ? <button className='box' onClick={handleNextClick}>Next Country</button> : null}
     </div>
   );
 }

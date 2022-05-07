@@ -1,4 +1,10 @@
 .component {
   height: 40%;
   background-color: grey;
+  display: grid;
+  place-items: center;
+}
+
+.image {
+  width: 50%;
 }
