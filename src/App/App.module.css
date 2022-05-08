@@ -1,8 +1,0 @@
-.component {
-  height: 100vh;
-  width: min(var(--app-width), 90vw);
-
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-}

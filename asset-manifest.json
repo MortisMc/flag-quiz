@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/flag-quiz/static/css/main.79556cc4.css",
+    "main.js": "/flag-quiz/static/js/main.0e19f66b.js",
+    "index.html": "/flag-quiz/index.html",
+    "main.79556cc4.css.map": "/flag-quiz/static/css/main.79556cc4.css.map",
+    "main.0e19f66b.js.map": "/flag-quiz/static/js/main.0e19f66b.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.79556cc4.css",
+    "static/js/main.0e19f66b.js"
+  ]
+}
