@@ -1,0 +1,1 @@
+[Site Link](https://mortismc.github.io/flag-quiz/)
