@@ -24,9 +24,9 @@ function nextCountry(setCountry, countries){
 }
 
 export default function App() {
-  const [studyMode, setStudyMode] = useState(true);
+  const [studyMode, setStudyMode] = useState(false);
   const [countries, setCountries] = useState([]);
-  const [country, setCountry] = useState({ name: 'Country not found', flag: 'Country not found'});
+  const [country, setCountry] = useState({ name: 'Loading...', flag: 'https://i.gifer.com/ZZ5H.gif'});
   const [score, setScore] = useState(0);
   const [previousScore, setPreviousScore] = useState(0);
   
@@ -51,9 +51,17 @@ export default function App() {
     })
   },[])
 
-  const controlsProps = {
+  const interfaceProps = {
+    country,
+    countries,
+    setScore,
+    setCountry,
+    nextCountry
+  }
+
+  const dashboardProps = {
     studyMode,
-    country: country.name,
+    country,
     countries,
     score,
     previousScore,
@@ -68,9 +76,9 @@ export default function App() {
   
   return (
     <div className={Styles.component}>
-      <Interface />
+      <Interface {...interfaceProps} />
       <Flag country={country} />
-      <Dashboard {...controlsProps} />
+      <Dashboard {...dashboardProps} />
     </div>
   );
 }

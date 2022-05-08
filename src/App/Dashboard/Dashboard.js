@@ -8,7 +8,7 @@ export default function Dashboard({studyMode, country, countries, score, previou
     <div className={Styles.component}>
       <ul className={Styles.boxes}>
         <button className='box' onClick={handleClick}>Change game mode ({studyMode ? 'Start Quiz' : 'Give up'})</button>
-        <div className='box'>{studyMode ? country : `Score: ${score}`}</div>
+        <div className='box'>{studyMode ? country.name || 'Loading...' : `Score: ${score}`}</div>
         <div className='box'>Previous Score: {previousScore}</div>
       </ul>
       {studyMode ? <button className='box' onClick={handleNextClick}>Next Country</button> : null}
