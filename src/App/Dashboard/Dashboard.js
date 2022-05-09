@@ -2,7 +2,7 @@ import React from 'react';
 import Styles from './Dashboard.module.css';
 
 export default function Dashboard({studyMode, country, countries, score, previousScore, changeGameMode, setPreviousScore, setScore, setStudyMode, nextCountry, setCountry}) {
-  const handleClick = () => changeGameMode(studyMode, score, setPreviousScore, setScore, setStudyMode);
+  const handleClick = () => changeGameMode(studyMode, score, setPreviousScore, setScore, setStudyMode, setCountry, countries);
   const handleNextClick = () => nextCountry(setCountry, countries);
   return (
     <div className={Styles.component}>

@@ -7,9 +7,10 @@ import Interface from './Interface';
 import Flag from './Flag';
 import Dashboard from './Dashboard';
 
-function changeGameMode(studyMode, score, setPreviousScore, setScore, setStudyMode){
+function changeGameMode(studyMode, score, setPreviousScore, setScore, setStudyMode, setCountry, countries){
   if (!studyMode && score) setPreviousScore( () => score ); // Only overrides previous score if score is non-zero
-  setScore( () => 0 )
+  setScore( () => 0 );
+  if (studyMode) nextCountry(setCountry, countries);
   setStudyMode( current => !current );
 }
 
@@ -71,7 +72,7 @@ export default function App() {
     setStudyMode,
     changeGameMode,
     nextCountry,
-    setCountry
+    setCountry 
   }
   
   return (
