@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Styles from './Interface.module.css';
 
 function simplifyString(string){
@@ -26,14 +26,18 @@ function handleChange(event, country, countries, inputRef, setSuggestions, setSc
   setSuggestions(names);
 }
 
-export default function Interface({ country, countries, setScore, setCountry, nextCountry }) {
-  const [suggestions, setSuggestions] = useState([])
-  const inputRef = useRef()
+export default function Interface({ country, countries, studyMode, setScore, setCountry, nextCountry }) {
+  const [suggestions, setSuggestions] = useState([]);
+  const inputRef = useRef();
+  useEffect(() => {
+    inputRef.current.value = '';  
+  }, [studyMode])
+  
   return (
     <div className={Styles.component}>
       <input ref={inputRef} onChange={(event) => handleChange(event, country, countries, inputRef, setSuggestions, setScore, setCountry, nextCountry)} type='text' placeholder='Type answer here' className='box'/>
       <ul className={`${Styles.suggestions} box`}>
-        {suggestions.map( (x,i) => <li key={i}>{x}</li> )}
+        {suggestions.map( (x,i) => <li className={Styles.suggestion} key={i}>{x}</li> )}
       </ul>
     </div>
   );

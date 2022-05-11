@@ -1,8 +1,15 @@
 .component {
   height: 100vh;
+  min-height: 800px;
   width: min(var(--app-width), 90vw);
-
+  
   display: flex;
   flex-direction: column;
-  justify-content: space-around;
+  justify-content: space-between;
+}
+
+@media (max-width: 480px) {
+  .component {
+    min-height: 500px;
+  }
 }

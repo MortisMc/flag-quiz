@@ -13,6 +13,7 @@
 :root {
   --background-colour: green;
   --app-width: 900px;
+  --mobile-font-size: 18px;
 }
 
 #root, body {
@@ -42,4 +43,11 @@ ul {
 
 button:hover {
   cursor: pointer;
+}
+
+@media (max-width: 480px) {
+  .box {
+    padding: 5px 0;
+    font-size: 18px;
+  }
 }

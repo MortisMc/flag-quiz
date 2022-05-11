@@ -39,10 +39,11 @@ export default function App() {
       const countriesRes = res.map( x => {
         // Only consider independent countries
         if (!x.independent) return null;
+        const widthSpecifierString = /320/g
         return {
           // deburr removes accents from letters
           name : deburr(x.name.common),
-          flag : x.flags.svg
+          flag : x.flags.png.replace(widthSpecifierString,'1280' )
         }
       })
       // Filters out the empty elements leftover from non-independent countries
@@ -55,6 +56,7 @@ export default function App() {
   const interfaceProps = {
     country,
     countries,
+    studyMode,
     setScore,
     setCountry,
     nextCountry
