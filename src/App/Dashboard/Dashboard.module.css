@@ -1,8 +1,8 @@
 .component {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   height: 30%;
+  padding-top: 50px;
 }
 
 .boxes {
