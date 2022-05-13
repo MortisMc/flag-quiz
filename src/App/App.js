@@ -39,6 +39,7 @@ export default function App() {
       const countriesRes = res.map( x => {
         // Only consider independent countries
         if (!x.independent) return null;
+        // Layout works best with a larger source image. So replacing 320px with 1280px is best
         const widthSpecifierString = /320/g
         return {
           // deburr removes accents from letters
