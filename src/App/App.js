@@ -7,8 +7,13 @@ import Interface from './Interface';
 import Flag from './Flag';
 import Dashboard from './Dashboard';
 
-function changeGameMode(studyMode, score, setPreviousScore, setScore, setStudyMode, setCountry, countries){
-  if (!studyMode && score) setPreviousScore( () => score ); // Only overrides previous score if score is non-zero
+function changeHighScore(score, setHighScore){
+  setHighScore( () => score ); 
+  localStorage.setItem('highScore', score);
+}
+
+function changeGameMode(studyMode, score, countries, highScore, setHighScore, setScore, setStudyMode, setCountry, changeHighScore){
+  if (!studyMode && score > highScore) changeHighScore(score, setHighScore);
   setScore( () => 0 );
   if (studyMode) nextCountry(setCountry, countries);
   setStudyMode( current => !current );
@@ -29,7 +34,7 @@ export default function App() {
   const [countries, setCountries] = useState([]);
   const [country, setCountry] = useState({ name: 'Loading...', flag: 'https://i.gifer.com/ZZ5H.gif'});
   const [score, setScore] = useState(0);
-  const [previousScore, setPreviousScore] = useState(0);
+  const [highScore, setHighScore] = useState(localStorage.getItem('highScore') || 0);
   
   useEffect(() => {
     // Fetch all required data on page-load
@@ -68,14 +73,15 @@ export default function App() {
     country,
     countries,
     score,
-    previousScore,
+    highScore,
 
-    setPreviousScore,
+    setHighScore,
     setScore,
     setStudyMode,
     changeGameMode,
     nextCountry,
-    setCountry 
+    setCountry,
+    changeHighScore
   }
   
   return (
