@@ -11,6 +11,11 @@
   padding: 5px;
 }
 
+.suggestionButton {
+  background-color: inherit;
+  width: 100%;
+}
+
 @media (max-width: 480px) {
   .component {
     height: 20vh;

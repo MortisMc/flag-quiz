@@ -20,8 +20,10 @@ function simplifyString(string){
   return string.replace(/\W/g, '').toLowerCase();
 }
 
-function handleInputChange(event, country, countries, studyMode, inputRef, setSuggestions, setScore, setCountry, nextCountry) {
-  const input = event.target.value;
+function handleInputChange(input, country, countries, studyMode, inputRef, setSuggestions, setScore, setCountry, nextCountry) {
+  // For suggestion click events
+  inputRef.current.value = input;
+  inputRef.current.focus();
 
   // Clears suggestions if input is empty
   if (!input.length) {
@@ -61,7 +63,7 @@ export default function Interface({ country, countries, studyMode, setScore, set
       <input
         ref={inputRef}
         onKeyDown={(event) => { if (studyMode && event.key === 'Enter') handleEnter(countries, inputRef, setCountry, setSuggestions) } }
-        onChange={(event) => handleInputChange(event, country, countries, studyMode, inputRef, setSuggestions, setScore, setCountry, nextCountry)}
+        onChange={(event) => handleInputChange(event.target.value, country, countries, studyMode, inputRef, setSuggestions, setScore, setCountry, nextCountry)}
         placeholder={studyMode ? 'Search country here' : 'Type answer here'}
         type='text'
         className='box'
@@ -69,7 +71,14 @@ export default function Interface({ country, countries, studyMode, setScore, set
       {
       suggestions.length > 0 &&
         <ul className={`${Styles.suggestions} box`}>
-          {suggestions.map( (x,i) => <li className={Styles.suggestion} key={i}>{x}</li> )}
+          {suggestions.map( (x,i) => 
+            <li 
+              onClick={()=>handleInputChange(x, country, countries, studyMode, inputRef, setSuggestions, setScore, setCountry, nextCountry)}
+              className={Styles.suggestion}
+              key={i}
+            >
+              <button className={Styles.suggestionButton}>{x}</button>
+            </li> )}
         </ul>
       }
     </div>
