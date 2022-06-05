@@ -13,6 +13,8 @@
 
 .suggestionButton {
   background-color: inherit;
+  color: inherit;
+  font-size: inherit;
   width: 100%;
 }
 
