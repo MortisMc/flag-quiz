@@ -32,7 +32,7 @@ function nextCountry(setCountry, countries){
 export default function App() {
   const [studyMode, setStudyMode] = useState(false);
   const [countries, setCountries] = useState([]);
-  const [country, setCountry] = useState({ name: 'Loading...', flag: 'https://i.gifer.com/ZZ5H.gif'});
+  const [country, setCountry] = useState({name: null, flag: null});
   const [score, setScore] = useState(0);
   const [highScore, setHighScore] = useState(localStorage.getItem('highScore') || 0);
   

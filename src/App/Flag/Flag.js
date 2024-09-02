@@ -5,7 +5,8 @@ export default function Flag({ country }) {
   return (
     <div className={Styles.component}>
       {/* inline height is made huge so it is bigger than max-height by default */}
-      {country.flag && <img className={Styles.image} height='999999px' src={country.flag} alt={`Flag of ${country.name}`}/>}
+      {country.name ? <img className={Styles.image} height='999999px' src={country.flag} alt={`Flag of ${country.name}`}/>
+                    : <b className={Styles.loader} >Loading...</b>}
     </div>
   );
 }
