@@ -63,6 +63,10 @@ export default function Interface({ country, countries, studyMode, setScore, set
       <input
         ref={inputRef}
         onKeyDown={(event) => { if (studyMode && event.key === 'Enter') handleEnter(countries, inputRef, setCountry, setSuggestions) } }
+        onKeyUp={(e) => { if (e.key === 'Escape'){
+            inputRef.current.value = '';
+            setSuggestions([])
+          }}}
         onChange={(event) => handleInputChange(event.target.value, country, countries, studyMode, inputRef, setSuggestions, setScore, setCountry, nextCountry)}
         placeholder={studyMode ? 'Search country here' : 'Type answer here'}
         type='text'

@@ -4,4 +4,3 @@ Dev todo list:
 * Never give the same country twice in a row
 * Loop through all countries before repeats
 * Choose answer with arrows and enter
-* Clear answer with escape
