@@ -38,22 +38,22 @@ export default function App() {
   
   useEffect(() => {
     // Fetch all required data on page-load
-    fetch(`https://restcountries.com/v3.1/all`)
+    // https://restcountries.com/#endpoints-rest-countries-typed-api-package
+    fetch(`https://restcountries.com/v3.1/independent?status=true&fields=name,flags`)
     .then( res => res.json())
     .then( res => {
       const countriesRes = res.map( x => {
-        // Only consider independent countries
-        if (!x.independent) return null;
         return {
           // deburr removes accents from letters
           name : deburr(x.name.common),
           flag : x.flags.svg
         }
       })
-      // Filters out the empty elements leftover from non-independent countries
-      .filter( x => x);
       setCountries( () => countriesRes );
       setCountry(countriesRes[getRandomCountryIndex(countriesRes)]);
+    })
+    .catch( () => {
+      console.error("Failed to fetch country data!")
     })
   },[])
 
