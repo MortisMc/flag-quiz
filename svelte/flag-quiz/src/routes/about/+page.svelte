@@ -1,22 +1,124 @@
 <script lang="ts">
-	// import { resolve } from '$app/paths';
+    import { onMount } from 'svelte';
 
-	let studyMode = $state(false);
-	let countries: App.Country[] = $state([]);
-	let suggestions: App.Country[] = $state([]);
-	let country: App.Country = $state({
-		name: "United Kingdom",
-		flag: "https://flagcdn.com/gb.svg",
-	});
-	let score: Number = $state(0);
-	let highScore: Number = $state(0);
-	let currentUserInputText: String = $state("");
+	function deburr (str: string) {
+		// https://stackoverflow.com/questions/990904/remove-accents-diacritics-in-a-string-in-javascript/37511463#37511463
+		return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+	}
+
+	function fetchCountries() {
+		// Fetch all required data on page-load
+		// https://restcountries.com/#endpoints-rest-countries-typed-api-package
+		fetch(`https://restcountries.com/v3.1/independent?status=true&fields=name,flags`)
+		.then( res => res.json())
+		.then( res => {
+			const d = new Date();
+			console.log(`countries fetched ${d.getTime()}`)
+			countries = res.map( (country: API.Country) => {
+				return {
+					// deburr removes accents from letters
+					name : deburr(country.name.common),
+					flag : country.flags.svg
+				}
+			})
+			randomiseCountries();
+		})
+		.catch( () => {
+			console.error("Failed to fetch country data!")
+		})
+	}
+
+	function randomiseCountries() {
+		const length = countries.length;
+		const newCountries: App.Country[] = new Array(length);
+		countries.forEach( (country: App.Country) => {
+			let randomIndex = Math.floor( Math.random() * length );
+			while (newCountries[randomIndex] != undefined)
+				randomIndex = (randomIndex + 1) % length;
+			newCountries[randomIndex] = country
+		})
+		countries = newCountries;
+	}
 
 	// function keydown(event: KeyboardEvent) {}
 	function confirmReset() {}
 	function handleNextClick() {}
 	function handleEnter() {}
-	function handleInputChange() {}
+
+
+	function simplifyString(string: String){
+		return string.replace(/\W/g, '').toLowerCase();
+	}
+
+	function nextCountry() {
+		countryIndex = (countryIndex + 1) % countries.length;
+		if (countryIndex === 0)
+			// TODO: Could do some sort of game complete thing
+			randomiseCountries();
+		targetCountry = countries[countryIndex];
+	}
+
+	function handleInputChange() {
+
+		// Clears suggestions if input is empty
+		if (!currentUserInputText.length) {
+			suggestions = [];
+			return;
+		}
+
+		// Handle 'correct answer' scenario
+		if (!studyMode && simplifyString(currentUserInputText) === simplifyString(targetCountry.name)) {
+			score++;
+			currentUserInputText = "";
+			suggestions = [];
+			nextCountry();
+			return
+		}
+
+		// Displays relevent suggestions
+		suggestions = []
+		countries.forEach( country => {
+			if (simplifyString(country.name).includes(simplifyString(currentUserInputText)))
+				suggestions.push(country.name);
+		})
+	}
+
+	function changeGameMode() {
+		if (!studyMode && score > highScore)
+			highScore = score;
+		if (studyMode)
+			nextCountry();
+
+		resetSuggestions();
+		score = 0;
+		studyMode = !studyMode;
+	}
+
+	function resetSuggestions() {
+		currentUserInputText = "";
+		suggestions = [];
+	}
+
+	// Non UI global variables
+	let countryIndex = 0;
+
+	// State variables bound to the UI
+	let studyMode = $state(false);
+	let countries: App.Country[] = $state([]);
+	let suggestions: String[] = $state([]);
+	let targetCountry: App.Country = $state({
+		name: "United Kingdom",
+		flag: "https://flagcdn.com/gb.svg",
+	});
+	let score: number = $state(0);
+	let highScore: number = $state(0);
+	let currentUserInputText: String = $state("");
+
+	// Ran Once
+	onMount(() => {
+		fetchCountries();
+	})
+
 </script>
 
 <!-- <svelte:window onkeydown={keydown} /> -->
@@ -35,11 +137,10 @@
 			}}
 			onkeyup={(e) => {
 				if (e.key === "Escape") {
-					currentUserInputText = "";
-					suggestions = [];
+					resetSuggestions();
 				}
 			}}
-			onchange={(event) => handleInputChange()}
+			oninput={handleInputChange}
 			placeholder={studyMode ? "Search country here" : "Type answer here"}
 			class="box"
 			type="text"
@@ -48,8 +149,9 @@
 			<ul class="suggestions box">
 				{#each suggestions as suggestion}
 					<li class="suggestion">
-						<button class="suggestionButton" onclick={() => handleInputChange()}>
-							{suggestion.name}
+						<button class="suggestionButton" >
+							<!-- onclick={() => handleInputChange()}> -->
+							{suggestion}
 						</button>
 					</li>
 				{/each}
@@ -58,12 +160,12 @@
 	</div>
 
 	<div class="my-flag">
-		{#if country.name}
+		{#if targetCountry.name}
 			<img
 				class="image"
 				height="999999px"
-				src={country.flag}
-				alt={`Flag of ${country.name}`}
+				src={targetCountry.flag}
+				alt={`Flag of ${targetCountry.name}`}
 			/>
 		{:else}
 			<b class="loader">Loading...</b>
@@ -72,11 +174,11 @@
 
 	<div class="my-dashboard">
 		<ul class="boxes">
-			<button class="box" onclick={() => (studyMode = !studyMode)}>
+			<button class="box" onclick={changeGameMode}>
 				{studyMode ? "Start Quiz!" : "Give up"}
 			</button>
 			<div class="box">
-				{studyMode ? country.name || "Loading..." : `Score: ${score}`}
+				{studyMode ? targetCountry.name || "Loading..." : `Score: ${score}`}
 			</div>
 			<button onclick={confirmReset} class="box">
 				High Score: {highScore}
