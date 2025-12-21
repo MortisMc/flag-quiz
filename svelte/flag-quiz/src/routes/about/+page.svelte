@@ -1,30 +1,89 @@
 <script lang="ts">
-	import { resolve } from '$app/paths';
+	// import { resolve } from '$app/paths';
+
+	let studyMode = $state(false);
+	let countries: App.Country[] = $state([]);
+	let suggestions: App.Country[] = $state([]);
+	let country: App.Country = $state({
+		name: "United Kingdom",
+		flag: "https://flagcdn.com/gb.svg",
+	});
+	let score: Number = $state(0);
+	let highScore: Number = $state(0);
+	let currentUserInputText: String = $state("");
+
+	// function keydown(event: KeyboardEvent) {}
+	function confirmReset() {}
+	function handleNextClick() {}
+	function handleEnter() {}
+	function handleInputChange() {}
 </script>
 
+<!-- <svelte:window onkeydown={keydown} /> -->
+
 <svelte:head>
-	<title>About</title>
-	<meta name="description" content="About this app" />
+	<title>Flag quiz</title>
+	<meta name="description" content="Flag quiz main page" />
 </svelte:head>
 
-<div class="text-column">
-	<h1>About this app</h1>
+<div class="my-app">
+	<div class="my-interface">
+		<input
+			bind:value={currentUserInputText}
+			onkeydown={(event) => {
+				if (studyMode && event.key === "Enter") handleEnter();
+			}}
+			onkeyup={(e) => {
+				if (e.key === "Escape") {
+					currentUserInputText = "";
+					suggestions = [];
+				}
+			}}
+			onchange={(event) => handleInputChange()}
+			placeholder={studyMode ? "Search country here" : "Type answer here"}
+			class="box"
+			type="text"
+		/>
+		{#if suggestions.length > 0}
+			<ul class="suggestions box">
+				{#each suggestions as suggestion}
+					<li class="suggestion">
+						<button class="suggestionButton" onclick={() => handleInputChange()}>
+							{suggestion.name}
+						</button>
+					</li>
+				{/each}
+			</ul>
+		{/if}
+	</div>
 
-	<p>
-		This is a <a href="https://svelte.dev/docs/kit">SvelteKit</a> app. You can make your own by typing
-		the following into your command line and following the prompts:
-	</p>
+	<div class="my-flag">
+		{#if country.name}
+			<img
+				class="image"
+				height="999999px"
+				src={country.flag}
+				alt={`Flag of ${country.name}`}
+			/>
+		{:else}
+			<b class="loader">Loading...</b>
+		{/if}
+	</div>
 
-	<pre>npx sv create</pre>
-
-	<p>
-		The page you're looking at is purely static HTML, with no client-side interactivity needed.
-		Because of that, we don't need to load any JavaScript. Try viewing the page's source, or opening
-		the devtools network panel and reloading.
-	</p>
-
-	<p>
-		The <a href={resolve('/sverdle')}>Sverdle</a> page illustrates SvelteKit's data loading and form
-		handling. Try using it with JavaScript disabled!
-	</p>
+	<div class="my-dashboard">
+		<ul class="boxes">
+			<button class="box" onclick={() => (studyMode = !studyMode)}>
+				{studyMode ? "Start Quiz!" : "Give up"}
+			</button>
+			<div class="box">
+				{studyMode ? country.name || "Loading..." : `Score: ${score}`}
+			</div>
+			<button onclick={confirmReset} class="box">
+				High Score: {highScore}
+			</button>
+		</ul>
+		{#if studyMode}
+			<button class="box" onclick={handleNextClick}>Next Country</button>
+		{/if}
+	</div>
 </div>

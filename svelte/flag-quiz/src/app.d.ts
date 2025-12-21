@@ -3,10 +3,23 @@
 declare global {
 	namespace App {
 		// interface Error {}
-		// interface Locals {}
 		// interface PageData {}
 		// interface PageState {}
 		// interface Platform {}
+		interface Country {
+			name: string;
+			flag: string;
+		}
+	}
+	namespace API {
+		interface Country {
+			name: {
+				common: string;
+				official: string;
+				nativeName?: Record<string, {official: string; common: string }> 
+			};
+			flags: { png: string; svg: string; alt?: string };
+		}
 	}
 }
 
