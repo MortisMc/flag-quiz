@@ -22,6 +22,7 @@
 				}
 			})
 			randomiseCountries();
+			firstTargetCountry();
 		})
 		.catch( () => {
 			console.error("Failed to fetch country data!")
@@ -45,12 +46,16 @@
 	function handleNextClick() {}
 	function handleEnter() {}
 
-
 	function simplifyString(string: String){
 		return string.replace(/\W/g, '').toLowerCase();
 	}
 
-	function nextCountry() {
+	function firstTargetCountry() {
+		countryIndex = 0;
+		targetCountry = countries[countryIndex];
+	}
+
+	function nextTargetCountry() {
 		countryIndex = (countryIndex + 1) % countries.length;
 		if (countryIndex === 0)
 			// TODO: Could do some sort of game complete thing
@@ -71,7 +76,7 @@
 			score++;
 			currentUserInputText = "";
 			suggestions = [];
-			nextCountry();
+			nextTargetCountry();
 			return
 		}
 
@@ -87,7 +92,7 @@
 		if (!studyMode && score > highScore)
 			highScore = score;
 		if (studyMode)
-			nextCountry();
+			nextTargetCountry();
 
 		resetSuggestions();
 		score = 0;
@@ -100,16 +105,13 @@
 	}
 
 	// Non UI global variables
-	let countryIndex = 0;
+	let countryIndex: number = 0;
 
 	// State variables bound to the UI
 	let studyMode = $state(false);
 	let countries: App.Country[] = $state([]);
 	let suggestions: String[] = $state([]);
-	let targetCountry: App.Country = $state({
-		name: "United Kingdom",
-		flag: "https://flagcdn.com/gb.svg",
-	});
+	let targetCountry: App.Country = $state({name: "", flag: ""});
 	let score: number = $state(0);
 	let highScore: number = $state(0);
 	let currentUserInputText: String = $state("");
@@ -160,15 +162,15 @@
 	</div>
 
 	<div class="my-flag">
-		{#if targetCountry.name}
+		{#if targetCountry.name === "" && targetCountry.flag === ""}
+			<b class="loader">Loading...</b>
+		{:else}
 			<img
 				class="image"
 				height="999999px"
 				src={targetCountry.flag}
 				alt={`Flag of ${targetCountry.name}`}
 			/>
-		{:else}
-			<b class="loader">Loading...</b>
 		{/if}
 	</div>
 
