@@ -104,7 +104,8 @@
 		suggestions = [];
 	}
 
-	const UNINITIALISED_TARGET_COUNTRY: string = JSON.stringify({ id: 0 , name: "", flag: "" });
+	const UNINITIALISED_TARGET_COUNTRY: App.Country = { id: 0, name: "", flag: "" }
+	const UNINITIALISED_TARGET_COUNTRY_STRING: string = JSON.stringify(UNINITIALISED_TARGET_COUNTRY);
 
 	// Non UI global variables
 	let countryIndex: number = 0;
@@ -113,7 +114,7 @@
 	let studyMode: boolean = $state(false);
 	let countries: App.Country[] = $state([]);
 	let suggestions: String[] = $state([]);
-	let targetCountry: App.Country = $state({ id: 0, name: "", flag: "" });
+	let targetCountry: App.Country = $state(UNINITIALISED_TARGET_COUNTRY);
 	let score: number = $state(0);
 	let highScore: number = $state(0);
 	let currentUserInputText: String = $state("");
@@ -164,7 +165,7 @@
 	</div>
 
 	<div class="my-flag">
-		{#if JSON.stringify(targetCountry) === UNINITIALISED_TARGET_COUNTRY}
+		{#if JSON.stringify(targetCountry) === UNINITIALISED_TARGET_COUNTRY_STRING}
 			<b class="loader">Loading...</b>
 		{:else}
 			<img
