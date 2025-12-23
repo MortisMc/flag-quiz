@@ -17,50 +17,65 @@
 			countries = res.map( (country: API.Country, idx: number): App.Country => {
 				return {
 					id: idx,
+					nextCountryId: INVALID_COUNTRY_ID, // initialised later
 					name : deburr(country.name.common), // deburr removes accents from letters
 					flag : country.flags.svg
 				}
 			})
-			randomiseCountries();
-			firstTargetCountry();
+
+			numberOfCountries = countries.length;
+
+			const firstTargetCountryId = randomiseCountries();
+			targetCountry = countries[firstTargetCountryId];
 		})
 		.catch( () => {
 			console.error("Failed to fetch country data!")
 		})
 	}
 
-	function randomiseCountries() {
-		const length = countries.length;
-		const newCountries: App.Country[] = new Array(length);
+	function randomiseCountries(): number {
+		const newCountryOrder: number[] = new Array(numberOfCountries);
 		countries.forEach( (country: App.Country) => {
-			let randomIndex = Math.floor( Math.random() * length );
-			while (newCountries[randomIndex] != undefined)
-				randomIndex = (randomIndex + 1) % length;
-			newCountries[randomIndex] = country
+			let randomIndex = Math.floor( Math.random() * numberOfCountries );
+			while (newCountryOrder[randomIndex] != undefined)
+				// A country has already been assigned this index, keep cycling
+				randomIndex = (randomIndex + 1) % numberOfCountries;
+			newCountryOrder[randomIndex] = country.id;
 		})
-		countries = newCountries;
+		// order:       1st  2nd  3rd  4th  5th  ...
+		// country id:   5    1    3    4    2   ...
+		newCountryOrder.forEach( (countryId: number, idx: number, orderArray: number[]) => {
+			// nextCountryId is only non-zero if there's more countryIds left in the array
+			if (idx + 1 < numberOfCountries)
+				countries[countryId].nextCountryId = orderArray[idx + 1];
+			else
+				countries[countryId].nextCountryId = INVALID_COUNTRY_ID;
+		});
+
+		return newCountryOrder[0];
 	}
 
 	// function keydown(event: KeyboardEvent) {}
-	function confirmReset() {}
-	function handleNextClick() {}
-	function handleEnter() {}
+	function confirmReset() {
+		// TODO
+	}
+	function handleNextClick() {
+		// TODO
+	}
+	function handleEnter() {
+		// TODO
+	}
 
 	function simplifyString(string: String){
 		return string.replace(/\W/g, '').toLowerCase();
 	}
 
-	function firstTargetCountry() {
-		countryIndex = 0;
-		targetCountry = countries[countryIndex];
-	}
-
 	function nextTargetCountry() {
-		countryIndex = (countryIndex + 1) % countries.length;
-		if (countryIndex === 0)
-			// TODO: Could do some sort of game complete thing
-			randomiseCountries();
-		targetCountry = countries[countryIndex];
+		if (targetCountry.nextCountryId > INVALID_COUNTRY_ID)
+			targetCountry = countries[targetCountry.nextCountryId];
+		else
+			// TODO
+			console.log("GAME OVER!");
 	}
 
 	function handleInputChange() {
@@ -74,8 +89,7 @@
 		// Handle 'correct answer' scenario
 		if (!studyMode && simplifyString(currentUserInputText) === simplifyString(targetCountry.name)) {
 			score++;
-			currentUserInputText = "";
-			suggestions = [];
+			resetSuggestions();
 			nextTargetCountry();
 			return
 		}
@@ -104,11 +118,13 @@
 		suggestions = [];
 	}
 
-	const UNINITIALISED_TARGET_COUNTRY: App.Country = { id: 0, name: "", flag: "" }
+	// Global constants
+	const UNINITIALISED_TARGET_COUNTRY: App.Country = { id: 0, nextCountryId: 0, name: "", flag: "" }
 	const UNINITIALISED_TARGET_COUNTRY_STRING: string = JSON.stringify(UNINITIALISED_TARGET_COUNTRY);
+	const INVALID_COUNTRY_ID = -1;
 
 	// Non UI global variables
-	let countryIndex: number = 0;
+	let numberOfCountries: number = -1;
 
 	// State variables bound to the UI
 	let studyMode: boolean = $state(false);
