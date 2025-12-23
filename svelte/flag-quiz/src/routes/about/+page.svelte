@@ -1,9 +1,29 @@
 <script lang="ts">
     import { onMount } from 'svelte';
 
-	function deburr (str: string) {
+	function deburr(str: string): string {
 		// https://stackoverflow.com/questions/990904/remove-accents-diacritics-in-a-string-in-javascript/37511463#37511463
 		return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+	}
+
+	function countyNameAlphabeticalCompare(a: App.Country, b: App.Country): 0 | 1 | -1 {
+		const sortedArray: string[] = [a.name,b.name].sort();
+
+		if (sortedArray[0] === sortedArray[1])
+		{
+			console.error("Duplicate country names encountered!")
+			return 0;
+		}
+
+		if (sortedArray[0] === a.name)
+			return -1;
+
+		if (sortedArray[0] === b.name)
+			return 1;
+
+		console.error("i dont get javascript object comparison :)")
+		return 0;
+
 	}
 
 	function fetchCountries() {
@@ -14,10 +34,12 @@
 		.then( (res: API.Country[]) => {
 			const d = new Date();
 			console.log(`countries fetched ${d.getTime()}`)
-			countries = res.map( (country: API.Country, idx: number): App.Country => {
+
+			// Convert api version of countries array to app version
+			countries = res.map( (country: API.Country): App.Country => {
 				return {
-					id: idx,
-					nextCountryId: INVALID_COUNTRY_ID, // initialised later
+					id: INVALID_COUNTRY_ID, // Initialised during sort
+					nextCountryId: INVALID_COUNTRY_ID, // Initialised during randomise
 					name : deburr(country.name.common), // deburr removes accents from letters
 					flag : country.flags.svg
 				}
@@ -25,10 +47,20 @@
 
 			numberOfCountries = countries.length;
 
+			// Sort the array into alphabetical order by country name
+			countries.sort( countyNameAlphabeticalCompare )
+
+			// Assign IDs according to this sorted alphabetical order
+			countries.forEach( (country: App.Country, id: number) => {
+				country.id = id;
+			})
+
+			// Assign nextCountryIds based on random order and assign first target country
 			const firstTargetCountryId = randomiseCountries();
 			targetCountry = countries[firstTargetCountryId];
 		})
-		.catch( () => {
+		.catch( (reason) => {
+			console.error(reason)
 			console.error("Failed to fetch country data!")
 		})
 	}
@@ -60,7 +92,8 @@
 		// TODO
 	}
 	function handleNextClick() {
-		// TODO
+		const nextIdAlphabetical = (targetCountry.id + 1) % numberOfCountries;
+		targetCountry = countries[nextIdAlphabetical];
 	}
 	function handleEnter() {
 		// TODO
