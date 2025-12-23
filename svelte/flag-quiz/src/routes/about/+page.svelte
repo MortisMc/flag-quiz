@@ -11,13 +11,13 @@
 		// https://restcountries.com/#endpoints-rest-countries-typed-api-package
 		fetch(`https://restcountries.com/v3.1/independent?status=true&fields=name,flags`)
 		.then( res => res.json())
-		.then( res => {
+		.then( (res: API.Country[]) => {
 			const d = new Date();
 			console.log(`countries fetched ${d.getTime()}`)
-			countries = res.map( (country: API.Country) => {
+			countries = res.map( (country: API.Country, idx: number): App.Country => {
 				return {
-					// deburr removes accents from letters
-					name : deburr(country.name.common),
+					id: idx,
+					name : deburr(country.name.common), // deburr removes accents from letters
 					flag : country.flags.svg
 				}
 			})
@@ -104,14 +104,16 @@
 		suggestions = [];
 	}
 
+	const UNINITIALISED_TARGET_COUNTRY: string = JSON.stringify({ id: 0 , name: "", flag: "" });
+
 	// Non UI global variables
 	let countryIndex: number = 0;
 
 	// State variables bound to the UI
-	let studyMode = $state(false);
+	let studyMode: boolean = $state(false);
 	let countries: App.Country[] = $state([]);
 	let suggestions: String[] = $state([]);
-	let targetCountry: App.Country = $state({name: "", flag: ""});
+	let targetCountry: App.Country = $state({ id: 0, name: "", flag: "" });
 	let score: number = $state(0);
 	let highScore: number = $state(0);
 	let currentUserInputText: String = $state("");
@@ -162,7 +164,7 @@
 	</div>
 
 	<div class="my-flag">
-		{#if targetCountry.name === "" && targetCountry.flag === ""}
+		{#if JSON.stringify(targetCountry) === UNINITIALISED_TARGET_COUNTRY}
 			<b class="loader">Loading...</b>
 		{:else}
 			<img

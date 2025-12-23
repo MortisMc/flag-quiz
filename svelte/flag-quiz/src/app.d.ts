@@ -7,6 +7,7 @@ declare global {
 		// interface PageState {}
 		// interface Platform {}
 		interface Country {
+			id: Number;
 			name: string;
 			flag: string;
 		}
